@@ -1,0 +1,1172 @@
+Q1. TEXT ANALYTICS ENGINE
+--------------------------------------------------------------------------------
+def clean_text(text):
+    punctuation = ".,!?;:()[]{}\"'"
+    text = text.lower()
+    for mark in punctuation:
+        text = text.replace(mark, " ")
+    return text.split()
+
+
+def analyse_text(text):
+    words = clean_text(text)
+    if len(words) == 0:
+        print("Please enter some text.")
+        return
+
+    frequency = {}
+    for word in words:
+        if word in frequency:
+            frequency[word] += 1
+        else:
+            frequency[word] = 1
+
+    top_words = sorted(frequency.items(), key=lambda item: item[1], reverse=True)
+    longest = max(words, key=len)
+    average = sum(len(word) for word in words) / len(words)
+    palindromes = []
+    for word in words:
+        if len(word) > 1 and word == word[::-1] and word not in palindromes:
+            palindromes.append(word)
+
+    print("Total words:", len(words))
+    print("Unique words:", len(frequency))
+    print("Top 5 words:", top_words[:5])
+    print("Longest word:", longest)
+    print("Average word length:", round(average, 2))
+    print("Palindromes:", palindromes)
+
+
+def main():
+    paragraph = input("Enter a paragraph: ")
+    analyse_text(paragraph)
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q2. MATRIX OPERATIONS USING NESTED LISTS
+--------------------------------------------------------------------------------
+def read_matrix(rows, columns):
+    matrix = []
+    for i in range(rows):
+        row = []
+        for j in range(columns):
+            value = int(input("Enter element: "))
+            row.append(value)
+        matrix.append(row)
+    return matrix
+
+
+def add_matrices(A, B):
+    result = []
+    for i in range(len(A)):
+        row = []
+        for j in range(len(A[0])):
+            row.append(A[i][j] + B[i][j])
+        result.append(row)
+    return result
+
+
+def subtract_matrices(A, B):
+    result = []
+    for i in range(len(A)):
+        row = []
+        for j in range(len(A[0])):
+            row.append(A[i][j] - B[i][j])
+        result.append(row)
+    return result
+
+
+def multiply_matrices(A, B):
+    result = []
+    for i in range(len(A)):
+        row = []
+        for j in range(len(B[0])):
+            total = 0
+            for k in range(len(B)):
+                total += A[i][k] * B[k][j]
+            row.append(total)
+        result.append(row)
+    return result
+
+
+def transpose_matrix(A):
+    result = []
+    for j in range(len(A[0])):
+        row = []
+        for i in range(len(A)):
+            row.append(A[i][j])
+        result.append(row)
+    return result
+
+
+def main():
+    r1 = int(input("Rows of first matrix: "))
+    c1 = int(input("Columns of first matrix: "))
+    if r1 <= 0 or c1 <= 0:
+        print("Matrix dimensions must be positive.")
+        return
+    A = read_matrix(r1, c1)
+    r2 = int(input("Rows of second matrix: "))
+    c2 = int(input("Columns of second matrix: "))
+    if r2 <= 0 or c2 <= 0:
+        print("Matrix dimensions must be positive.")
+        return
+    B = read_matrix(r2, c2)
+
+    if r1 == r2 and c1 == c2:
+        print("Addition:", add_matrices(A, B))
+        print("Subtraction:", subtract_matrices(A, B))
+    else:
+        print("Addition and subtraction are not possible.")
+
+    if c1 == r2:
+        print("Multiplication:", multiply_matrices(A, B))
+    else:
+        print("Multiplication is not possible.")
+
+    print("Transpose of first matrix:", transpose_matrix(A))
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q3. STUDENT RECORD MANAGEMENT
+--------------------------------------------------------------------------------
+students = {}
+
+
+def add_student():
+    roll = input("Enter roll number: ")
+    if roll in students:
+        print("Roll number already exists.")
+        return
+    name = input("Enter name: ")
+    department = input("Enter department: ")
+    marks = []
+    for i in range(3):
+        marks.append(float(input("Enter marks: ")))
+    students[roll] = {"name": name, "department": department, "marks": marks}
+    print("Record added.")
+
+
+def show_students():
+    if len(students) == 0:
+        print("No records available.")
+        return
+    rank_list = []
+    department_marks = {}
+
+    for roll, data in students.items():
+        marks = data["marks"]
+        total = sum(marks)
+        percentage = total / 3
+        if min(marks) < 35:
+            status = "Fail"
+            grade = "F"
+        else:
+            status = "Pass"
+            if percentage >= 75:
+                grade = "A"
+            elif percentage >= 60:
+                grade = "B"
+            else:
+                grade = "C"
+
+        print(roll, data["name"], "Total:", total,
+              "Percentage:", round(percentage, 2), "Grade:", grade, status)
+        rank_list.append((percentage, data["name"]))
+        dept = data["department"]
+        if dept not in department_marks:
+            department_marks[dept] = []
+        department_marks[dept].append(percentage)
+
+    rank_list.sort(reverse=True)
+    print("Rank list:", rank_list)
+    print("Topper:", rank_list[0][1])
+    for dept in department_marks:
+        average = sum(department_marks[dept]) / len(department_marks[dept])
+        print(dept, "department average:", round(average, 2))
+
+
+def update_student():
+    roll = input("Enter roll number to update: ")
+    if roll in students:
+        students[roll]["name"] = input("Enter new name: ")
+        print("Name updated.")
+    else:
+        print("Student not found.")
+
+
+def delete_student():
+    roll = input("Enter roll number to delete: ")
+    if roll in students:
+        del students[roll]
+        print("Record deleted.")
+    else:
+        print("Student not found.")
+
+
+def main():
+    while True:
+        print("1.Add  2.Update  3.Delete  4.Display  5.Exit")
+        choice = input("Enter choice: ")
+        if choice == "1":
+            add_student()
+        elif choice == "2":
+            update_student()
+        elif choice == "3":
+            delete_student()
+        elif choice == "4":
+            show_students()
+        elif choice == "5":
+            break
+        else:
+            print("Invalid choice.")
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q4. RECURSION LABORATORY
+--------------------------------------------------------------------------------
+def tower_of_hanoi(n, source, target, helper):
+    if n == 1:
+        print("Move disk from", source, "to", target)
+        return 1
+    moves = tower_of_hanoi(n - 1, source, helper, target)
+    print("Move disk from", source, "to", target)
+    moves += 1
+    moves += tower_of_hanoi(n - 1, helper, target, source)
+    return moves
+
+
+def binary_search(numbers, low, high, key):
+    if low > high:
+        return -1
+    middle = (low + high) // 2
+    if numbers[middle] == key:
+        return middle
+    if key < numbers[middle]:
+        return binary_search(numbers, low, middle - 1, key)
+    return binary_search(numbers, middle + 1, high, key)
+
+
+def permutations(word):
+    if len(word) <= 1:
+        return [word]
+    result = []
+    for i in range(len(word)):
+        first = word[i]
+        remaining = word[:i] + word[i + 1:]
+        for part in permutations(remaining):
+            value = first + part
+            if value not in result:
+                result.append(value)
+    return result
+
+
+def main():
+    n = 3
+    print("Tower of Hanoi:")
+    total = tower_of_hanoi(n, "A", "C", "B")
+    print("Total moves:", total)
+    numbers = [10, 20, 30, 40, 50]
+    print("Position of 30:", binary_search(numbers, 0, len(numbers) - 1, 30))
+    print("Unique permutations:", permutations("AAB"))
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q5. COURSE RECOMMENDATION USING SETS
+--------------------------------------------------------------------------------
+courses = {
+    "Amit": {"Python", "AI", "ML"},
+    "Neha": {"Python", "Web", "DBMS"},
+    "Ravi": {"AI", "ML", "Data Science"},
+    "Pooja": {"Web", "DBMS", "Java"},
+    "Kiran": {"Python", "AI", "Data Science"},
+    "Rahul": {"Networking", "Cyber Security"}
+}
+
+
+def jaccard(user1, user2):
+    common = courses[user1] & courses[user2]
+    all_courses = courses[user1] | courses[user2]
+    return len(common) / len(all_courses)
+
+
+def recommend(user):
+    if user not in courses:
+        print("User not found.")
+        return
+    suggested = set()
+    for other in courses:
+        if other != user and jaccard(user, other) > 0:
+            suggested = suggested | (courses[other] - courses[user])
+    if len(suggested) == 0:
+        print("No recommendations found.")
+    else:
+        print("Recommended courses:", list(suggested)[:3])
+
+
+def main():
+    user = input("Enter user name: ")
+    if user in courses:
+        action = input("Add or remove a course? (a/r/n): ").lower()
+        if action == "a":
+            courses[user].add(input("Course name: "))
+        elif action == "r":
+            courses[user].discard(input("Course name: "))
+        print("Your courses:", courses[user])
+        recommend(user)
+    else:
+        print("User not found.")
+
+    popular = {}
+    for user_courses in courses.values():
+        for course in user_courses:
+            popular[course] = popular.get(course, 0) + 1
+    most_popular = max(popular, key=popular.get)
+    print("Most popular course:", most_popular)
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q6. SALES DATA FILE PROCESSING
+--------------------------------------------------------------------------------
+def process_sales():
+    region_total = {}
+    valid_rows = []
+    try:
+        file = open("sales.txt", "r")
+    except FileNotFoundError:
+        print("sales.txt file not found.")
+        return
+
+    for line in file:
+        parts = line.strip().split(",")
+        if len(parts) != 5:
+            continue
+        try:
+            sale_id = parts[0].strip()
+            region = parts[1].strip()
+            product = parts[2].strip()
+            price = float(parts[3])
+            quantity = int(parts[4])
+            if price < 0 or quantity < 0:
+                continue
+            revenue = price * quantity
+            region_total[region] = region_total.get(region, 0) + revenue
+            valid_rows.append(line.strip() + "," + str(revenue) + "\n")
+        except ValueError:
+            continue
+    file.close()
+
+    with open("sales_summary.txt", "w") as output:
+        output.write("Valid sales records with revenue:\n")
+        for row in valid_rows:
+            output.write(row)
+        output.write("\nRegion totals:\n")
+        for region in region_total:
+            output.write(region + ": " + str(region_total[region]) + "\n")
+        if region_total:
+            best = max(region_total, key=region_total.get)
+            output.write("Highest revenue region: " + best)
+
+    print("Region totals:", region_total)
+    if region_total:
+        print("Highest revenue region:", max(region_total, key=region_total.get))
+    print("Summary saved in sales_summary.txt")
+
+
+if __name__ == "__main__":
+    process_sales()
+
+
+Q7. BANK TRANSACTION PROCESSOR
+--------------------------------------------------------------------------------
+class InvalidTransactionError(Exception):
+    pass
+
+
+def process_transactions():
+    balances = {}
+    rejected = 0
+    try:
+        file = open("transactions.txt", "r")
+    except FileNotFoundError:
+        print("transactions.txt file not found.")
+        return
+
+    for line in file:
+        parts = line.strip().split(",")
+        if len(parts) != 3:
+            rejected += 1
+            continue
+        account = parts[0].strip()
+        transaction = parts[1].strip().lower()
+        try:
+            amount = float(parts[2])
+            if amount <= 0:
+                raise InvalidTransactionError("Amount must be positive")
+            if account not in balances:
+                balances[account] = 0
+            if transaction == "deposit":
+                balances[account] += amount
+            elif transaction == "withdraw":
+                if amount > balances[account]:
+                    raise InvalidTransactionError("Insufficient balance")
+                balances[account] -= amount
+            else:
+                raise InvalidTransactionError("Wrong transaction type")
+        except (ValueError, InvalidTransactionError):
+            rejected += 1
+    file.close()
+    print("Final balances:", balances)
+    print("Rejected transactions:", rejected)
+
+
+if __name__ == "__main__":
+    process_transactions()
+
+
+Q8. LIBRARY MANAGEMENT SYSTEM
+--------------------------------------------------------------------------------
+class Book:
+    def __init__(self, book_id, title):
+        self.book_id = book_id
+        self.title = title
+        self.issued = False
+
+
+class Member:
+    def __init__(self, member_id, name):
+        self.member_id = member_id
+        self.name = name
+        self.books = []
+        self.fine = 0
+
+
+class Library:
+    def __init__(self):
+        self.books = {}
+        self.members = {}
+
+    def issue_book(self, member_id, book_id):
+        if member_id not in self.members or book_id not in self.books:
+            print("Invalid member or book.")
+            return
+        member = self.members[member_id]
+        book = self.books[book_id]
+        if book.issued:
+            print("Book is already issued.")
+        elif len(member.books) == 3:
+            print("A member can issue only 3 books.")
+        else:
+            member.books.append(book_id)
+            book.issued = True
+            print("Book issued.")
+
+    def return_book(self, member_id, book_id, late_days):
+        if member_id not in self.members or book_id not in self.books:
+            print("Invalid member or book.")
+            return
+        member = self.members[member_id]
+        book = self.books[book_id]
+        if book_id not in member.books:
+            print("This book was not issued to this member.")
+            return
+        member.books.remove(book_id)
+        book.issued = False
+        if late_days > 0:
+            member.fine += late_days * 2
+        print("Book returned. Fine:", member.fine)
+
+    def display(self):
+        for member in self.members.values():
+            book_titles = []
+            for book_id in member.books:
+                book_titles.append(self.books[book_id].title)
+            print(member.name, "Issued books:", book_titles)
+            if member.fine > 0:
+                print(member.name, "Fine: Rs.", member.fine)
+
+
+lib = Library()
+lib.books[1] = Book(1, "Python")
+lib.books[2] = Book(2, "Computer Basics")
+lib.members[101] = Member(101, "Amit")
+lib.issue_book(101, 1)
+lib.return_book(101, 1, 4)
+lib.display()
+
+
+Q9. PAYROLL SYSTEM USING POLYMORPHISM
+--------------------------------------------------------------------------------
+class Employee:
+    def __init__(self, emp_id, name):
+        self.emp_id = emp_id
+        self.name = name
+
+    def calculate_pay(self):
+        return 0
+
+
+class FullTime(Employee):
+    def __init__(self, emp_id, name, salary):
+        super().__init__(emp_id, name)
+        self.salary = salary
+
+    def calculate_pay(self):
+        return self.salary
+
+
+class PartTime(Employee):
+    def __init__(self, emp_id, name, hours, rate):
+        super().__init__(emp_id, name)
+        self.hours = hours
+        self.rate = rate
+
+    def calculate_pay(self):
+        return self.hours * self.rate
+
+
+class Intern(Employee):
+    def __init__(self, emp_id, name, stipend):
+        super().__init__(emp_id, name)
+        self.stipend = stipend
+
+    def calculate_pay(self):
+        return self.stipend
+
+
+def main():
+    staff = [FullTime(1, "Amit", 30000),
+             PartTime(2, "Neha", 20, 300),
+             Intern(3, "Ravi", 10000)]
+    total = 0
+    for person in staff:
+        pay = person.calculate_pay()
+        print(person.name, "Salary:", pay)
+        total += pay
+    print("Average salary:", total / len(staff))
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q10. SECURE WALLET SYSTEM
+--------------------------------------------------------------------------------
+class Wallet:
+    def __init__(self, pin, balance=0):
+        self.__pin = pin
+        self.__balance = balance
+        self.__wrong_attempts = 0
+        self.__locked = False
+        self.history = []
+
+    def check_pin(self, pin):
+        if self.__locked:
+            print("Wallet is locked.")
+            return False
+        if pin == self.__pin:
+            self.__wrong_attempts = 0
+            return True
+        self.__wrong_attempts += 1
+        print("Wrong PIN.")
+        if self.__wrong_attempts == 3:
+            self.__locked = True
+            print("Wallet locked after 3 wrong attempts.")
+        return False
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            self.history.append("Deposited " + str(amount))
+        else:
+            print("Enter a positive amount.")
+
+    def withdraw(self, pin, amount):
+        if self.check_pin(pin):
+            if amount > 0 and amount <= self.__balance:
+                self.__balance -= amount
+                self.history.append("Withdrawn " + str(amount))
+            else:
+                print("Invalid amount or low balance.")
+
+    def change_pin(self, old_pin, new_pin):
+        if self.check_pin(old_pin):
+            self.__pin = new_pin
+            print("PIN changed.")
+
+    def show_statement(self):
+        print("Transactions:", self.history)
+        print("Balance:", self.__balance)
+
+
+wallet = Wallet(1234, 1000)
+wallet.deposit(500)
+wallet.withdraw(1234, 200)
+wallet.withdraw(1111, 100)
+wallet.show_statement()
+
+
+Q11. MULTIPLE INHERITANCE AND MRO
+--------------------------------------------------------------------------------
+class Person:
+    def __init__(self, name, age, **kwargs):
+        super().__init__(**kwargs)
+        self.name = name
+        self.age = age
+
+
+class Student(Person):
+    def __init__(self, roll_no, marks, **kwargs):
+        super().__init__(**kwargs)
+        self.roll_no = roll_no
+        self.marks = marks
+
+
+class Employee(Person):
+    def __init__(self, emp_id, salary, **kwargs):
+        super().__init__(**kwargs)
+        self.emp_id = emp_id
+        self.salary = salary
+
+
+class TeachingAssistant(Student, Employee):
+    def __init__(self, name, age, roll_no, marks, emp_id, salary):
+        super().__init__(name=name, age=age, roll_no=roll_no,
+                         marks=marks, emp_id=emp_id, salary=salary)
+
+    def stipend(self):
+        return self.salary + self.marks * 100
+
+
+first = TeachingAssistant("Amit", 22, "S01", 9, "E01", 10000)
+second = TeachingAssistant("Neha", 23, "S02", 8, "E02", 12000)
+print(first.name, first.roll_no, first.emp_id, "Stipend:", first.stipend())
+print(second.name, second.roll_no, second.emp_id, "Stipend:", second.stipend())
+print("MRO:", TeachingAssistant.mro())
+
+
+Q12. POLYNOMIAL CLASS WITH OPERATOR OVERLOADING
+--------------------------------------------------------------------------------
+class Polynomial:
+    def __init__(self, coefficients):
+        self.coefficients = coefficients  # Constant term comes first
+
+    def __str__(self):
+        answer = ""
+        for power in range(len(self.coefficients) - 1, -1, -1):
+            value = self.coefficients[power]
+            if value != 0:
+                answer += str(value) + "x^" + str(power) + " + "
+        if answer == "":
+            return "0"
+        return answer[:-3]
+
+    def __add__(self, other):
+        size = max(len(self.coefficients), len(other.coefficients))
+        result = []
+        for i in range(size):
+            a = self.coefficients[i] if i < len(self.coefficients) else 0
+            b = other.coefficients[i] if i < len(other.coefficients) else 0
+            result.append(a + b)
+        return Polynomial(result)
+
+    def __sub__(self, other):
+        size = max(len(self.coefficients), len(other.coefficients))
+        result = []
+        for i in range(size):
+            a = self.coefficients[i] if i < len(self.coefficients) else 0
+            b = other.coefficients[i] if i < len(other.coefficients) else 0
+            result.append(a - b)
+        return Polynomial(result)
+
+    def __mul__(self, other):
+        result = [0] * (len(self.coefficients) + len(other.coefficients) - 1)
+        for i in range(len(self.coefficients)):
+            for j in range(len(other.coefficients)):
+                result[i + j] += self.coefficients[i] * other.coefficients[j]
+        return Polynomial(result)
+
+    def __call__(self, x):
+        answer = 0
+        for i in range(len(self.coefficients)):
+            answer += self.coefficients[i] * (x ** i)
+        return answer
+
+    def derivative(self):
+        result = []
+        for i in range(1, len(self.coefficients)):
+            result.append(i * self.coefficients[i])
+        return Polynomial(result)
+
+
+p1 = Polynomial([2, 3, 1])
+p2 = Polynomial([1, 2])
+p3 = Polynomial([4, 0, 2])
+print("P1:", p1)
+print("P2:", p2)
+print("P1 + P2:", p1 + p2)
+print("P1 - P2:", p1 - p2)
+print("P1 * P2:", p1 * p2)
+print("P1 at x=2:", p1(2))
+print("Derivative of P1:", p1.derivative())
+print("Third polynomial:", p3)
+
+
+Q13. INVENTORY MANAGER
+--------------------------------------------------------------------------------
+class Product:
+    def __init__(self, code, name, price, quantity):
+        if price < 0 or quantity < 0:
+            raise ValueError("Price and quantity cannot be negative.")
+        self.code = code
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+
+
+class Inventory:
+    def __init__(self):
+        self.products = {}
+
+    def add_product(self, product):
+        self.products[product.code] = product
+
+    def restock(self, code, quantity):
+        if code in self.products and quantity > 0:
+            self.products[code].quantity += quantity
+        else:
+            print("Invalid product or quantity.")
+
+    def sell(self, code, quantity):
+        if code not in self.products or quantity <= 0:
+            print("Invalid product or quantity.")
+        elif quantity > self.products[code].quantity:
+            print("Not enough stock.")
+        else:
+            self.products[code].quantity -= quantity
+            print("Sale completed.")
+
+    def total_value(self):
+        total = 0
+        for product in self.products.values():
+            total += product.price * product.quantity
+        return total
+
+    def low_stock(self, limit):
+        for product in self.products.values():
+            if product.quantity < limit:
+                print(product.name, product.quantity)
+
+    def save_file(self):
+        with open("inventory.txt", "w") as file:
+            for product in self.products.values():
+                file.write(product.code + "," + product.name + "," +
+                           str(product.price) + "," + str(product.quantity) + "\n")
+
+
+stock = Inventory()
+stock.add_product(Product("P1", "Keyboard", 800, 10))
+stock.add_product(Product("P2", "Mouse", 300, 4))
+stock.sell("P1", 2)
+stock.restock("P2", 5)
+print("Total inventory value:", stock.total_value())
+print("Low stock products:")
+stock.low_stock(5)
+stock.save_file()
+
+
+Q14. HOSPITAL APPOINTMENT SYSTEM
+--------------------------------------------------------------------------------
+class Doctor:
+    def __init__(self, doctor_id, name):
+        self.doctor_id = doctor_id
+        self.name = name
+
+
+class Patient:
+    def __init__(self, patient_id, name):
+        self.patient_id = patient_id
+        self.name = name
+
+
+class Appointment:
+    def __init__(self, doctor, patient, date, time):
+        self.doctor = doctor
+        self.patient = patient
+        self.date = date
+        self.time = time
+
+
+class Hospital:
+    def __init__(self):
+        self.appointments = []
+
+    def book(self, doctor, patient, date, time):
+        for appointment in self.appointments:
+            if (appointment.doctor.doctor_id == doctor.doctor_id and
+                appointment.date == date and appointment.time == time):
+                print("This doctor's time slot is already booked.")
+                return
+        self.appointments.append(Appointment(doctor, patient, date, time))
+        print("Appointment booked.")
+
+    def cancel(self, patient_id, doctor_id, date, time):
+        for appointment in self.appointments:
+            if (appointment.patient.patient_id == patient_id and
+                appointment.doctor.doctor_id == doctor_id and
+                appointment.date == date and appointment.time == time):
+                self.appointments.remove(appointment)
+                print("Appointment cancelled.")
+                return
+        print("Appointment not found.")
+
+    def show_doctor_appointments(self, doctor_id):
+        found = False
+        for appointment in self.appointments:
+            if appointment.doctor.doctor_id == doctor_id:
+                print(appointment.patient.name, appointment.date, appointment.time)
+                found = True
+        if not found:
+            print("No appointments for this doctor.")
+
+
+doc = Doctor("D1", "Dr. Shah")
+patient1 = Patient("P1", "Amit")
+patient2 = Patient("P2", "Neha")
+hospital = Hospital()
+hospital.book(doc, patient1, "10-11-2026", "10:00 AM")
+hospital.book(doc, patient2, "10-11-2026", "10:00 AM")
+hospital.show_doctor_appointments("D1")
+hospital.cancel("P1", "D1", "10-11-2026", "10:00 AM")
+
+
+Q15. SIGNAL PROCESSING WITH NUMPY
+--------------------------------------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def main():
+    np.random.seed(10)
+    time = np.linspace(0, 10, 300)
+    original = np.sin(time)
+    noisy = original + np.random.normal(0, 0.3, 300)
+
+    # Moving average filter
+    window = 5
+    average_filter = np.ones(window) / window
+    smooth = np.convolve(noisy, average_filter, mode="same")
+
+    mean = np.mean(noisy)
+    standard_deviation = np.std(noisy)
+    z_score = abs((noisy - mean) / standard_deviation)
+    outliers = z_score > 2
+
+    processed = smooth.copy()
+    positions = np.arange(300)
+    processed[outliers] = np.interp(positions[outliers], positions[~outliers], smooth[~outliers])
+
+    fig, ax = plt.subplots()
+    ax.plot(time, noisy, label="Noisy signal")
+    ax.plot(time, processed, label="Processed signal")
+    ax.set_title("Signal Processing")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Value")
+    ax.legend()
+    plt.savefig("signal.png")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q16. BUSINESS DATA ANALYSIS WITH PANDAS
+--------------------------------------------------------------------------------
+import pandas as pd
+
+
+def main():
+    data = {
+        "Date": pd.date_range("2026-01-01", periods=20),
+        "Region": ["North", "South", "East", "West"] * 5,
+        "Product": ["Pen", "Book", "Bag", "Pencil"] * 5,
+        "Units": [10, 15, None, 20, 12, 18, 25, 30, 8, 14,
+                  22, 19, 11, 16, 21, 26, 9, 13, 24, 28],
+        "Price": [10, 50, 100, 5] * 5
+    }
+    df = pd.DataFrame(data)
+    print("First five records:")
+    print(df.head())
+    print("Missing values:")
+    print(df.isnull().sum())
+
+    df["Units"] = df["Units"].fillna(df["Units"].mean())
+    df["Revenue"] = df["Units"] * df["Price"]
+    print("Revenue by region:")
+    print(df.groupby("Region")["Revenue"].sum())
+    print("Revenue by product:")
+    product_total = df.groupby("Product")["Revenue"].sum()
+    print(product_total)
+    print("Highest revenue product:", product_total.idxmax())
+    df.to_csv("sales.csv", index=False)
+    print("Data saved in sales.csv")
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q17. MULTI-PANEL ANALYTICAL DASHBOARD
+--------------------------------------------------------------------------------
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def main():
+    fig, ax = plt.subplots(2, 2, figsize=(10, 8))
+
+    # First graph: line chart
+    time = [1, 2, 3, 4, 5]
+    values = [10, 15, 12, 20, 25]
+    ax[0, 0].plot(time, values)
+    ax[0, 0].set_title("Line Chart")
+    ax[0, 0].set_xlabel("Time")
+    ax[0, 0].set_ylabel("Value")
+
+    # Second graph: histogram and mean
+    marks = np.random.normal(60, 10, 100)
+    ax[0, 1].hist(marks, bins=10)
+    ax[0, 1].axvline(np.mean(marks), label="Mean")
+    ax[0, 1].set_title("Histogram")
+    ax[0, 1].set_xlabel("Marks")
+    ax[0, 1].set_ylabel("Frequency")
+    ax[0, 1].legend()
+
+    # Third graph: scatter plot and regression line
+    x = np.array([1, 2, 3, 4, 5])
+    y = np.array([2, 4, 5, 4, 6])
+    slope, intercept = np.polyfit(x, y, 1)
+    ax[1, 0].scatter(x, y)
+    ax[1, 0].plot(x, slope * x + intercept)
+    ax[1, 0].set_title("Scatter and Regression")
+    ax[1, 0].set_xlabel("X")
+    ax[1, 0].set_ylabel("Y")
+
+    # Fourth graph: grouped bar chart
+    groups = ["A", "B", "C"]
+    first = [10, 15, 12]
+    second = [12, 13, 16]
+    position = np.arange(3)
+    ax[1, 1].bar(position - 0.2, first, width=0.4, label="Group 1")
+    ax[1, 1].bar(position + 0.2, second, width=0.4, label="Group 2")
+    ax[1, 1].set_xticks(position)
+    ax[1, 1].set_xticklabels(groups)
+    ax[1, 1].set_title("Grouped Bar Chart")
+    ax[1, 1].set_xlabel("Category")
+    ax[1, 1].set_ylabel("Value")
+    ax[1, 1].legend()
+
+    plt.tight_layout()
+    plt.savefig("dashboard.png")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
+
+
+Q18. PLOT CLASS FRAMEWORK
+--------------------------------------------------------------------------------
+import matplotlib.pyplot as plt
+
+
+class BasePlot:
+    def __init__(self, x, y, title, xlabel, ylabel):
+        self.x = x
+        self.y = y
+        self.title = title
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+
+
+class LinePlot(BasePlot):
+    def render(self, ax):
+        ax.plot(self.x, self.y, marker="o")
+        ax.set_title(self.title)
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
+
+
+class BarPlot(BasePlot):
+    def render(self, ax):
+        ax.bar(self.x, self.y)
+        ax.set_title(self.title)
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
+
+
+class Dashboard:
+    def __init__(self, plots):
+        self.plots = plots
+
+    def show(self):
+        fig, axes = plt.subplots(1, len(self.plots), figsize=(10, 4))
+        if len(self.plots) == 1:
+            axes = [axes]
+        for i in range(len(self.plots)):
+            self.plots[i].render(axes[i])
+        plt.tight_layout()
+        plt.savefig("plot_dashboard.png")
+        plt.show()
+
+
+line = LinePlot([1, 2, 3], [4, 6, 5], "Line Plot", "X", "Y")
+bar = BarPlot(["A", "B", "C"], [5, 8, 6], "Bar Plot", "Items", "Values")
+board = Dashboard([line, bar])
+board.show()
+
+
+Q19. STUDENT ANALYTICS AND VISUALISATION
+--------------------------------------------------------------------------------
+import matplotlib.pyplot as plt
+
+
+class Student:
+    def __init__(self, name, marks):
+        self.name = name
+        self.marks = marks
+
+    def average(self):
+        return sum(self.marks) / 3
+
+
+class ClassAnalyzer:
+    def __init__(self, students):
+        self.students = students
+
+    def analyse(self):
+        averages = []
+        for student in self.students:
+            averages.append(student.average())
+        topper_index = averages.index(max(averages))
+        print("Topper:", self.students[topper_index].name)
+        print("Class average:", sum(averages) / len(averages))
+
+    def draw_graphs(self):
+        sorted_students = sorted(self.students, key=lambda s: s.average(), reverse=True)
+        names = [s.name for s in sorted_students]
+        averages = [s.average() for s in sorted_students]
+        subject1 = [s.marks[0] for s in self.students]
+        subject2 = [s.marks[1] for s in self.students]
+        subject3 = [s.marks[2] for s in self.students]
+
+        fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+        ax[0].barh(names, averages)
+        ax[0].invert_yaxis()
+        ax[0].set_title("Student Average Marks")
+        ax[0].set_xlabel("Average")
+        ax[0].set_ylabel("Student")
+
+        ax[1].boxplot([subject1, subject2, subject3])
+        ax[1].set_xticklabels(["Subject 1", "Subject 2", "Subject 3"])
+        ax[1].set_title("Marks Distribution")
+        ax[1].set_ylabel("Marks")
+
+        plt.tight_layout()
+        plt.savefig("student_analysis.png")
+        plt.show()
+        print("Observation: The first student in the sorted graph has the highest average.")
+        print("The boxplot compares the spread of marks in the three subjects.")
+
+
+students = [
+    Student("Amit", [80, 75, 90]),
+    Student("Neha", [70, 85, 80]),
+    Student("Ravi", [65, 70, 75]),
+    Student("Pooja", [90, 92, 88]),
+    Student("Kiran", [60, 65, 70]),
+    Student("Rahul", [75, 78, 72]),
+    Student("Sneha", [85, 80, 87]),
+    Student("Vijay", [55, 60, 65])
+]
+
+analyzer = ClassAnalyzer(students)
+analyzer.analyse()
+analyzer.draw_graphs()
+
+
+Q20. NUMERICAL INTEGRATION AND ERROR ANALYSIS
+--------------------------------------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+class Integrator:
+    def __init__(self, function, a, b):
+        self.function = function
+        self.a = a
+        self.b = b
+
+
+class Trapezoid(Integrator):
+    def integrate(self, n):
+        x = np.linspace(self.a, self.b, n + 1)
+        y = self.function(x)
+        h = (self.b - self.a) / n
+        return h / 2 * (y[0] + 2 * sum(y[1:-1]) + y[-1])
+
+
+class Midpoint(Integrator):
+    def integrate(self, n):
+        h = (self.b - self.a) / n
+        x = self.a + (np.arange(n) + 0.5) * h
+        return h * sum(self.function(x))
+
+
+def main():
+    function = lambda x: np.sin(x)
+    a = 0
+    b = np.pi
+    exact_answer = 2
+    values = [4, 8, 16, 32]
+    trapezoid_errors = []
+    midpoint_errors = []
+
+    for n in values:
+        trap = Trapezoid(function, a, b).integrate(n)
+        mid = Midpoint(function, a, b).integrate(n)
+        trapezoid_errors.append(abs(exact_answer - trap))
+        midpoint_errors.append(abs(exact_answer - mid))
+        print("n =", n, "Trapezoid error =", trapezoid_errors[-1],
+              "Midpoint error =", midpoint_errors[-1])
+
+    fig, ax = plt.subplots()
+    ax.plot(values, trapezoid_errors, marker="o", label="Trapezoid")
+    ax.plot(values, midpoint_errors, marker="s", label="Midpoint")
+    ax.set_title("Integration Error")
+    ax.set_xlabel("Number of subintervals")
+    ax.set_ylabel("Absolute error")
+    ax.set_yscale("log")
+    ax.legend()
+    plt.savefig("integration_error.png")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
